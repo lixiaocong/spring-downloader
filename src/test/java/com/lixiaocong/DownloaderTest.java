@@ -32,77 +32,36 @@
 
 package com.lixiaocong;
 
-import com.lixiaocong.cms.downloader.UnionDownloader;
-import com.lixiaocong.downloader.DownloadTask;
 import com.lixiaocong.downloader.DownloaderException;
 import com.lixiaocong.downloader.IDownloader;
-import com.lixiaocong.downloader.aria2c4j.AriaClient;
-import com.lixiaocong.downloader.transmission4j.TransmissionClient;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
-import java.util.List;
-
 public class DownloaderTest {
-
-    private String aria2cUrl = "http://localhost:6800/jsonrpc";
-    private String aria2cPassword = "password";
-    private String fileDir = "/cms/storage";
-
-    private String transmissionUri = "http://localhost:9091/transmission/rpc";
-    private String transmissionUsername = "username";
-    private String transmissionPassword = "password";
 
     private IDownloader downloader;
 
     @Before
     public void before() {
-        AriaClient ariaClient = new AriaClient(this.aria2cUrl, this.aria2cPassword, this.fileDir);
-        TransmissionClient transmissionClient = new TransmissionClient(this.transmissionUsername, this.transmissionPassword, this.transmissionUri);
-        this.downloader = new UnionDownloader(transmissionClient, ariaClient);
     }
 
     @Test
     public void addHttp() throws DownloaderException {
-        downloader.addByUrl("http://www.baidu.com");
     }
 
     @Test
-    public void addTorrent() throws IOException, DownloaderException {
-        File file = new File("src/test/resources/test.torrent");
-        InputStream in = new FileInputStream(file);
-        int len = in.available();
-        byte[] data = new byte[len];
-        in.read(data, 0, len);
-        in.close();
-        String s = Base64.getEncoder().encodeToString(data);
-        downloader.addByMetainfo(s);
+    public void addTorrent() throws DownloaderException {
     }
 
     @Test
     public void get() throws DownloaderException {
-        List<DownloadTask> downloadTasks = downloader.get();
-        downloadTasks.forEach(task->{
-            System.out.println(task.getName());
-        });
     }
 
     @Test
     public void getSingle() throws DownloaderException {
-        List<DownloadTask> downloadTasks = downloader.get();
-        for (DownloadTask task : downloadTasks) {
-            DownloadTask singleTask = downloader.get(task.getId());
-            System.out.println(singleTask.getName());
-        }
     }
 
     @Test
     public void remove() throws DownloaderException {
-        downloader.remove();
     }
 }
